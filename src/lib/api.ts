@@ -221,23 +221,30 @@ export async function getMatch(id: number): Promise<Match> {
 
 // ---------- Predictions ----------
 
-export async function getMyPredictions(): Promise<
-  Array<Prediction & { match: Match }>
-> {
+export type PredictionWithMatch = Prediction & { match: Match };
+
+export async function getMyPredictions(): Promise<PredictionWithMatch[]> {
   const { user } = requireAuth();
   const all = readPredictionsRaw().filter((p) => p.user_id === user.id);
   const matches = readMatches();
-  const joined = all
-    .map((p) => {
-      const match = matches.find((m) => m.id === p.match_id);
-      return match ? { ...p, match } : null;
-    })
-    .filter((x): x is Prediction & { match: Match } => x !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.match.match_date).getTime() -
-        new Date(a.match.match_date).getTime(),
-    );
+  const joined: PredictionWithMatch[] = [];
+  for (const p of all) {
+    const match = matches.find((m) => m.id === p.match_id);
+    if (!match) continue;
+    joined.push({
+      id: p.id,
+      match_id: p.match_id,
+      predicted_home: p.predicted_home,
+      predicted_away: p.predicted_away,
+      points_earned: p.points_earned,
+      match,
+    });
+  }
+  joined.sort(
+    (a, b) =>
+      new Date(b.match.match_date).getTime() -
+      new Date(a.match.match_date).getTime(),
+  );
   return delay(joined);
 }
 
