@@ -1,100 +1,79 @@
--- =============================================================
--- Predictor Mundial 2026 — Datos iniciales (seed)
--- Ejecutar DESPUÉS de schema.sql
--- Fuente grupos: Sorteo FIFA · Miami · 5 dic 2024
--- =============================================================
-
--- ── 48 equipos ───────────────────────────────────────────────
--- Grupos A–L, 4 equipos por grupo
+CREATE SCHEMA IF NOT EXISTS "world_cup";
+SET search_path TO "world_cup";
 
 INSERT INTO teams (name, code, flag_emoji, group_name, confederation) VALUES
 
--- GRUPO A (sede: USA)
-('Estados Unidos',  'USA', '🇺🇸', 'A', 'CONCACAF'),
-('Panamá',          'PAN', '🇵🇦', 'A', 'CONCACAF'),
-('Marruecos',       'MAR', '🇲🇦', 'A', 'CAF'),
-('Albania',         'ALB', '🇦🇱', 'A', 'UEFA'),   -- ⚠️ verificar con FIFA.com
+-- GRUPO A
+('México',          'MEX', '🇲🇽', 'A', 'CONCACAF'),
+('Sudáfrica',       'RSA', '🇿🇦', 'A', 'CAF'),
+('Corea del Sur',   'KOR', '🇰🇷', 'A', 'AFC'),
+('República Checa', 'CZE', '🇨🇿', 'A', 'UEFA'),
 
--- GRUPO B (sede: México)
-('México',          'MEX', '🇲🇽', 'B', 'CONCACAF'),
-('Jamaica',         'JAM', '🇯🇲', 'B', 'CONCACAF'),
-('Venezuela',       'VEN', '🇻🇪', 'B', 'CONMEBOL'),
-('Ecuador',         'ECU', '🇪🇨', 'B', 'CONMEBOL'),
+-- GRUPO B
+('Canadá',          'CAN', '🇨🇦', 'B', 'CONCACAF'),
+('Bosnia Herzegovina', 'BIH', '🇧🇦', 'B', 'UEFA'),
+('Qatar',           'QAT', '🇶🇦', 'B', 'AFC'),
+('Suiza',           'SUI', '🇨🇭', 'B', 'UEFA'),
 
--- GRUPO C (sede: Canadá)
-('Canadá',          'CAN', '🇨🇦', 'C', 'CONCACAF'),
-('Honduras',        'HON', '🇭🇳', 'C', 'CONCACAF'),
-('Portugal',        'POR', '🇵🇹', 'C', 'UEFA'),
-('Arabia Saudita',  'KSA', '🇸🇦', 'C', 'AFC'),    -- ⚠️ verificar
+-- GRUPO C
+('Brasil',          'BRA', '🇧🇷', 'C', 'CONMEBOL'),
+('Marruecos',       'MAR', '🇲🇦', 'C', 'CAF'),
+('Haití',           'HAI', '🇭🇹', 'C', 'CONCACAF'),
+('Escocia',         'SCO', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'C', 'UEFA'),
 
 -- GRUPO D
-('Argentina',       'ARG', '🇦🇷', 'D', 'CONMEBOL'),
-('Chile',           'CHI', '🇨🇱', 'D', 'CONMEBOL'),
+('Estados Unidos',  'USA', '🇺🇸', 'D', 'CONCACAF'),
+('Paraguay',        'PAR', '🇵🇾', 'D', 'CONMEBOL'),
 ('Australia',       'AUS', '🇦🇺', 'D', 'AFC'),
-('Irak',            'IRQ', '🇮🇶', 'D', 'AFC'),     -- ⚠️ verificar
+('Turquía',         'TUR', '🇹🇷', 'D', 'UEFA'),
 
 -- GRUPO E
-('España',          'ESP', '🇪🇸', 'E', 'UEFA'),
-('Países Bajos',    'NED', '🇳🇱', 'E', 'UEFA'),
-('Brasil',          'BRA', '🇧🇷', 'E', 'CONMEBOL'),
-('Turquía',         'TUR', '🇹🇷', 'E', 'UEFA'),    -- ⚠️ verificar
+('Alemania',        'GER', '🇩🇪', 'E', 'UEFA'),
+('Curazao',         'CUW', '🇨🇼', 'E', 'CONCACAF'),
+('Costa de Marfil', 'CIV', '🇨🇮', 'E', 'CAF'),
+('Ecuador',         'ECU', '🇪🇨', 'E', 'CONMEBOL'),
 
 -- GRUPO F
-('Francia',         'FRA', '🇫🇷', 'F', 'UEFA'),
-('Italia',          'ITA', '🇮🇹', 'F', 'UEFA'),
-('Bélgica',         'BEL', '🇧🇪', 'F', 'UEFA'),
-('México',          'MEX', '🇲🇽', 'F', 'CONCACAF'), -- placeholder
--- NOTA: México ya está en B; este grupo necesita verificación
+('Países Bajos',    'NED', '🇳🇱', 'F', 'UEFA'),
+('Japón',           'JPN', '🇯🇵', 'F', 'AFC'),
+('Suecia',          'SWE', '🇸🇪', 'F', 'UEFA'),
+('Túnez',           'TUN', '🇹🇳', 'F', 'CAF'),
 
 -- GRUPO G
-('Alemania',        'GER', '🇩🇪', 'G', 'UEFA'),
-('Japón',           'JPN', '🇯🇵', 'G', 'AFC'),
-('Colombia',        'COL', '🇨🇴', 'G', 'CONMEBOL'),
-('Serbia',          'SRB', '🇷🇸', 'G', 'UEFA'),    -- ⚠️ verificar
+('Bélgica',         'BEL', '🇧🇪', 'G', 'UEFA'),
+('Egipto',          'EGY', '🇪🇬', 'G', 'CAF'),
+('Irán',            'IRN', '🇮🇷', 'G', 'AFC'),
+('Nueva Zelanda',   'NZL', '🇳🇿', 'G', 'OFC'),
 
 -- GRUPO H
-('Inglaterra',      'ENG', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'H', 'UEFA'),
-('Senegal',         'SEN', '🇸🇳', 'H', 'CAF'),
+('España',          'ESP', '🇪🇸', 'H', 'UEFA'),
+('Cabo Verde',      'CPV', '🇨🇻', 'H', 'CAF'),
+('Arabia Saudita',  'SAU', '🇸🇦', 'H', 'AFC'),
 ('Uruguay',         'URU', '🇺🇾', 'H', 'CONMEBOL'),
-('Eslovaquia',      'SVK', '🇸🇰', 'H', 'UEFA'),    -- ⚠️ verificar
 
 -- GRUPO I
-('Croacia',         'CRO', '🇭🇷', 'I', 'UEFA'),
-('Suiza',           'SUI', '🇨🇭', 'I', 'UEFA'),
-('Irán',            'IRN', '🇮🇷', 'I', 'AFC'),
-('Costa Rica',      'CRC', '🇨🇷', 'I', 'CONCACAF'), -- ⚠️ verificar
+('Francia',         'FRA', '🇫🇷', 'I', 'UEFA'),
+('Senegal',         'SEN', '🇸🇳', 'I', 'CAF'),
+('Irak',            'IRQ', '🇮🇶', 'I', 'AFC'),
+('Noruega',         'NOR', '🇳🇴', 'I', 'UEFA'),
 
 -- GRUPO J
-('Corea del Sur',   'KOR', '🇰🇷', 'J', 'AFC'),
+('Argentina',       'ARG', '🇦🇷', 'J', 'CONMEBOL'),
+('Argelia',         'ALG', '🇩🇿', 'J', 'CAF'),
 ('Austria',         'AUT', '🇦🇹', 'J', 'UEFA'),
-('Nigeria',         'NGA', '🇳🇬', 'J', 'CAF'),
-('Paraguay',        'PAR', '🇵🇾', 'J', 'CONMEBOL'),
+('Jordania', 'JOR', '🇯🇴', 'J', 'AFC'),
 
 -- GRUPO K
-('Dinamarca',       'DEN', '🇩🇰', 'K', 'UEFA'),
-('Escocia',         'SCO', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'K', 'UEFA'),  -- ⚠️ verificar
-('Sudáfrica',       'RSA', '🇿🇦', 'K', 'CAF'),
-('Perú',            'PER', '🇵🇪', 'K', 'CONMEBOL'), -- ⚠️ verificar
+('Portugal',        'POR', '🇵🇹', 'K', 'UEFA'),
+('RD Congo',        'COD', '🇨🇩', 'K', 'CAF'),
+('Uzbekistán',      'UZB', '🇺🇿', 'K', 'AFC'),
+('Colombia',        'COL', '🇨🇴', 'K', 'CONMEBOL'),
 
 -- GRUPO L
-('Egipto',          'EGY', '🇪🇬', 'L', 'CAF'),
-('Hungría',         'HUN', '🇭🇺', 'L', 'UEFA'),
-('Nueva Zelanda',   'NZL', '🇳🇿', 'L', 'OFC'),
-('Arabia Saudita',  'SAU', '🇸🇦', 'L', 'AFC');   -- ⚠️ placeholder
-
--- =============================================================
--- ⚠️  IMPORTANTE ANTES DE USAR EN PRODUCCIÓN
---
---  Los grupos marcados con ⚠️ deben verificarse en:
---  https://www.fifa.com/fifaplus/en/tournaments/mens/worldcup/canadamexicousa2026
---
---  Una vez confirmados, actualizar con:
---    UPDATE teams SET group_name = 'X' WHERE code = 'YYY';
---
---  Los partidos de la fase de grupos dependen de que los equipos
---  estén en el grupo correcto, así que verificar ANTES de insertar matches.
--- =============================================================
-
+('Inglaterra',      'ENG', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'L', 'UEFA'),
+('Croacia',         'CRO', '🇭🇷', 'L', 'UEFA'),
+('Ghana',           'GHA', '🇬🇭', 'L', 'CAF'),
+('Panamá',          'PAN', '🇵🇦', 'L', 'CONCACAF'),
 
 -- ── Función auxiliar para obtener id por código ──────────────
 -- La usaremos en los INSERTs de matches para no hardcodear IDs
@@ -105,119 +84,145 @@ CREATE OR REPLACE FUNCTION team_id(p_code TEXT) RETURNS INTEGER AS $$
 $$ LANGUAGE SQL STABLE;
 
 
--- ── 72 partidos fase de grupos ───────────────────────────────
--- Cada grupo juega ronda todos contra todos (6 partidos × 12 grupos = 72)
--- Fechas oficiales: jun 11 – jul 2 de 2026 (UTC-5, hora de las sedes)
--- Fuente horarios: https://www.fifa.com/
+-- ── 72 Partidos de fase de grupos ───────────────────────────────
 
 INSERT INTO matches
   (home_team_id, away_team_id, match_date, venue, phase, matchday, status)
 VALUES
 
--- ────────────── GRUPO A ──────────────
--- USA vs PAN
-(team_id('USA'), team_id('PAN'), '2026-06-11 19:00:00-05', 'SoFi Stadium, Los Angeles',        'groups', 1, 'upcoming'),
--- MAR vs ALB
-(team_id('MAR'), team_id('ALB'), '2026-06-11 22:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 1, 'upcoming'),
--- USA vs MAR
-(team_id('USA'), team_id('MAR'), '2026-06-15 19:00:00-05', 'AT&T Stadium, Dallas',              'groups', 2, 'upcoming'),
--- PAN vs ALB
-(team_id('PAN'), team_id('ALB'), '2026-06-15 16:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 2, 'upcoming'),
--- USA vs ALB  (simultáneos jornada 3)
-(team_id('USA'), team_id('ALB'), '2026-06-19 16:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 3, 'upcoming'),
--- PAN vs MAR  (simultáneos jornada 3)
-(team_id('PAN'), team_id('MAR'), '2026-06-19 16:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 3, 'upcoming'),
+-- ───────────── GRUPO A — México, Sudáfrica, Corea del Sur, Rep. Checa ─────────────
+-- Jornada 1
+(team_id('MEX'), team_id('RSA'), '2026-06-11 14:00:00+00', 'Estadio Azteca, Ciudad de México',     'groups', 1, 'upcoming'),
+(team_id('KOR'), team_id('CZE'), '2026-06-11 21:00:00+00', 'Estadio Akron, Guadalajara',           'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('CZE'), team_id('RSA'), '2026-06-18 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 2, 'upcoming'),
+(team_id('MEX'), team_id('KOR'), '2026-06-18 20:00:00+00', 'Estadio Akron, Guadalajara',           'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('CZE'), team_id('MEX'), '2026-06-24 20:00:00+00', 'Estadio Azteca, Ciudad de México',     'groups', 3, 'upcoming'),
+(team_id('RSA'), team_id('KOR'), '2026-06-24 20:00:00+00', 'Estadio BBVA, Monterrey',              'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO B ──────────────
-(team_id('MEX'), team_id('JAM'), '2026-06-12 19:00:00-05', 'Estadio Azteca, Ciudad de México',  'groups', 1, 'upcoming'),
-(team_id('VEN'), team_id('ECU'), '2026-06-12 22:00:00-05', 'NRG Stadium, Houston',              'groups', 1, 'upcoming'),
-(team_id('MEX'), team_id('VEN'), '2026-06-16 19:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 2, 'upcoming'),
-(team_id('JAM'), team_id('ECU'), '2026-06-16 16:00:00-05', 'AT&T Stadium, Dallas',              'groups', 2, 'upcoming'),
-(team_id('MEX'), team_id('ECU'), '2026-06-20 16:00:00-05', 'Estadio Azteca, Ciudad de México',  'groups', 3, 'upcoming'),
-(team_id('JAM'), team_id('VEN'), '2026-06-20 16:00:00-05', 'NRG Stadium, Houston',              'groups', 3, 'upcoming'),
+-- ───────────── GRUPO B — Canadá, Bosnia-Herzegovina, Catar, Suiza ─────────────
+-- Jornada 1
+(team_id('CAN'), team_id('BIH'), '2026-06-12 14:00:00+00', 'BMO Field, Toronto',                   'groups', 1, 'upcoming'),
+(team_id('QAT'), team_id('SUI'), '2026-06-13 14:00:00+00', 'Levi''s Stadium, Santa Clara',         'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('SUI'), team_id('BIH'), '2026-06-18 14:00:00+00', 'SoFi Stadium, Los Ángeles',            'groups', 2, 'upcoming'),
+(team_id('CAN'), team_id('QAT'), '2026-06-18 17:00:00+00', 'BC Place, Vancouver',                  'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('SUI'), team_id('CAN'), '2026-06-24 14:00:00+00', 'BC Place, Vancouver',                  'groups', 3, 'upcoming'),
+(team_id('BIH'), team_id('QAT'), '2026-06-24 14:00:00+00', 'Lumen Field, Seattle',                 'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO C ──────────────
-(team_id('CAN'), team_id('HON'), '2026-06-13 19:00:00-05', 'BC Place, Vancouver',               'groups', 1, 'upcoming'),
-(team_id('POR'), team_id('KSA'), '2026-06-13 22:00:00-05', 'BMO Field, Toronto',                'groups', 1, 'upcoming'),
-(team_id('CAN'), team_id('POR'), '2026-06-17 19:00:00-05', 'BC Place, Vancouver',               'groups', 2, 'upcoming'),
-(team_id('HON'), team_id('KSA'), '2026-06-17 16:00:00-05', 'BMO Field, Toronto',                'groups', 2, 'upcoming'),
-(team_id('CAN'), team_id('KSA'), '2026-06-21 16:00:00-05', 'BC Place, Vancouver',               'groups', 3, 'upcoming'),
-(team_id('HON'), team_id('POR'), '2026-06-21 16:00:00-05', 'BMO Field, Toronto',                'groups', 3, 'upcoming'),
+-- ───────────── GRUPO C — Brasil, Marruecos, Haití, Escocia ─────────────
+-- Jornada 1
+(team_id('BRA'), team_id('MAR'), '2026-06-13 17:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 1, 'upcoming'),
+(team_id('HAI'), team_id('SCO'), '2026-06-13 20:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('SCO'), team_id('MAR'), '2026-06-19 17:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 2, 'upcoming'),
+(team_id('BRA'), team_id('HAI'), '2026-06-19 19:30:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('SCO'), team_id('BRA'), '2026-06-24 17:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 3, 'upcoming'),
+(team_id('MAR'), team_id('HAI'), '2026-06-24 17:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO D ──────────────
-(team_id('ARG'), team_id('CHI'), '2026-06-13 16:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 1, 'upcoming'),
-(team_id('AUS'), team_id('IRQ'), '2026-06-13 13:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 1, 'upcoming'),
-(team_id('ARG'), team_id('AUS'), '2026-06-17 19:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 2, 'upcoming'),
-(team_id('CHI'), team_id('IRQ'), '2026-06-17 16:00:00-05', 'AT&T Stadium, Dallas',              'groups', 2, 'upcoming'),
-(team_id('ARG'), team_id('IRQ'), '2026-06-21 19:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 3, 'upcoming'),
-(team_id('CHI'), team_id('AUS'), '2026-06-21 19:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 3, 'upcoming'),
+-- ───────────── GRUPO D — Estados Unidos, Paraguay, Australia, Turquía ─────────────
+-- Jornada 1
+(team_id('USA'), team_id('PAR'), '2026-06-12 20:00:00+00', 'SoFi Stadium, Los Ángeles',            'groups', 1, 'upcoming'),
+(team_id('AUS'), team_id('TUR'), '2026-06-13 23:00:00+00', 'BC Place, Vancouver',                  'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('USA'), team_id('AUS'), '2026-06-19 14:00:00+00', 'Lumen Field, Seattle',                 'groups', 2, 'upcoming'),
+(team_id('TUR'), team_id('PAR'), '2026-06-19 22:00:00+00', 'Levi''s Stadium, Santa Clara',         'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('TUR'), team_id('USA'), '2026-06-25 21:00:00+00', 'SoFi Stadium, Los Ángeles',            'groups', 3, 'upcoming'),
+(team_id('PAR'), team_id('AUS'), '2026-06-25 21:00:00+00', 'Levi''s Stadium, Santa Clara',         'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO E ──────────────
-(team_id('ESP'), team_id('NED'), '2026-06-14 19:00:00-05', 'AT&T Stadium, Dallas',              'groups', 1, 'upcoming'),
-(team_id('BRA'), team_id('TUR'), '2026-06-14 22:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 1, 'upcoming'),
-(team_id('ESP'), team_id('BRA'), '2026-06-18 19:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 2, 'upcoming'),
-(team_id('NED'), team_id('TUR'), '2026-06-18 16:00:00-05', 'NRG Stadium, Houston',              'groups', 2, 'upcoming'),
-(team_id('ESP'), team_id('TUR'), '2026-06-22 19:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 3, 'upcoming'),
-(team_id('NED'), team_id('BRA'), '2026-06-22 19:00:00-05', 'AT&T Stadium, Dallas',              'groups', 3, 'upcoming'),
+-- ───────────── GRUPO E — Alemania, Curazao, Costa de Marfil, Ecuador ─────────────
+-- Jornada 1
+(team_id('GER'), team_id('CUW'), '2026-06-14 12:00:00+00', 'NRG Stadium, Houston',                 'groups', 1, 'upcoming'),
+(team_id('CIV'), team_id('ECU'), '2026-06-14 18:00:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('GER'), team_id('CIV'), '2026-06-20 15:00:00+00', 'BMO Field, Toronto',                   'groups', 2, 'upcoming'),
+(team_id('ECU'), team_id('CUW'), '2026-06-20 19:00:00+00', 'Arrowhead Stadium, Kansas City',       'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('CUW'), team_id('CIV'), '2026-06-25 15:00:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 3, 'upcoming'),
+(team_id('ECU'), team_id('GER'), '2026-06-25 15:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO F ──────────────
-(team_id('FRA'), team_id('ITA'), '2026-06-14 13:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 1, 'upcoming'),
-(team_id('BEL'), team_id('JAM'), '2026-06-14 16:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 1, 'upcoming'),
-(team_id('FRA'), team_id('BEL'), '2026-06-18 22:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 2, 'upcoming'),
-(team_id('ITA'), team_id('JAM'), '2026-06-18 13:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 2, 'upcoming'),
-(team_id('FRA'), team_id('JAM'), '2026-06-22 16:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 3, 'upcoming'),
-(team_id('ITA'), team_id('BEL'), '2026-06-22 16:00:00-05', 'BMO Field, Toronto',                'groups', 3, 'upcoming'),
+-- ───────────── GRUPO F — Países Bajos, Japón, Suecia, Túnez ─────────────
+-- Jornada 1
+(team_id('NED'), team_id('JPN'), '2026-06-14 15:00:00+00', 'AT&T Stadium, Arlington',              'groups', 1, 'upcoming'),
+(team_id('SWE'), team_id('TUN'), '2026-06-14 21:00:00+00', 'Estadio BBVA, Monterrey',              'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('NED'), team_id('SWE'), '2026-06-20 12:00:00+00', 'NRG Stadium, Houston',                 'groups', 2, 'upcoming'),
+(team_id('TUN'), team_id('JPN'), '2026-06-20 23:00:00+00', 'Estadio BBVA, Monterrey',              'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('JPN'), team_id('SWE'), '2026-06-25 18:00:00+00', 'AT&T Stadium, Arlington',              'groups', 3, 'upcoming'),
+(team_id('TUN'), team_id('NED'), '2026-06-25 18:00:00+00', 'Arrowhead Stadium, Kansas City',       'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO G ──────────────
-(team_id('GER'), team_id('JPN'), '2026-06-15 13:00:00-05', 'NRG Stadium, Houston',              'groups', 1, 'upcoming'),
-(team_id('COL'), team_id('SRB'), '2026-06-15 22:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 1, 'upcoming'),
-(team_id('GER'), team_id('COL'), '2026-06-19 22:00:00-05', 'AT&T Stadium, Dallas',              'groups', 2, 'upcoming'),
-(team_id('JPN'), team_id('SRB'), '2026-06-19 19:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 2, 'upcoming'),
-(team_id('GER'), team_id('SRB'), '2026-06-23 19:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 3, 'upcoming'),
-(team_id('JPN'), team_id('COL'), '2026-06-23 19:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 3, 'upcoming'),
+-- ───────────── GRUPO G — Bélgica, Egipto, Irán, Nueva Zelanda ─────────────
+-- Jornada 1
+(team_id('BEL'), team_id('EGY'), '2026-06-15 14:00:00+00', 'Lumen Field, Seattle',                 'groups', 1, 'upcoming'),
+(team_id('IRN'), team_id('NZL'), '2026-06-15 20:00:00+00', 'SoFi Stadium, Los Ángeles',            'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('BEL'), team_id('IRN'), '2026-06-21 14:00:00+00', 'SoFi Stadium, Los Ángeles',            'groups', 2, 'upcoming'),
+(team_id('NZL'), team_id('EGY'), '2026-06-21 20:00:00+00', 'BC Place, Vancouver',                  'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('EGY'), team_id('IRN'), '2026-06-26 22:00:00+00', 'Lumen Field, Seattle',                 'groups', 3, 'upcoming'),
+(team_id('NZL'), team_id('BEL'), '2026-06-26 22:00:00+00', 'BC Place, Vancouver',                  'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO H ──────────────
-(team_id('ENG'), team_id('SEN'), '2026-06-15 16:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 1, 'upcoming'),
-(team_id('URU'), team_id('SVK'), '2026-06-15 19:00:00-05', 'BC Place, Vancouver',               'groups', 1, 'upcoming'),
-(team_id('ENG'), team_id('URU'), '2026-06-19 13:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 2, 'upcoming'),
-(team_id('SEN'), team_id('SVK'), '2026-06-19 13:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 2, 'upcoming'),
-(team_id('ENG'), team_id('SVK'), '2026-06-23 16:00:00-05', 'NRG Stadium, Houston',              'groups', 3, 'upcoming'),
-(team_id('SEN'), team_id('URU'), '2026-06-23 16:00:00-05', 'AT&T Stadium, Dallas',              'groups', 3, 'upcoming'),
+-- ───────────── GRUPO H — España, Cabo Verde, Arabia Saudita, Uruguay ─────────────
+-- Jornada 1
+(team_id('ESP'), team_id('CPV'), '2026-06-15 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 1, 'upcoming'),
+(team_id('KSA'), team_id('URU'), '2026-06-15 27:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('ESP'), team_id('KSA'), '2026-06-21 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 2, 'upcoming'),
+(team_id('URU'), team_id('CPV'), '2026-06-21 17:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('CPV'), team_id('KSA'), '2026-06-26 19:00:00+00', 'NRG Stadium, Houston',                 'groups', 3, 'upcoming'),
+(team_id('URU'), team_id('ESP'), '2026-06-26 19:00:00+00', 'Estadio Akron, Guadalajara',           'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO I ──────────────
-(team_id('CRO'), team_id('SUI'), '2026-06-16 22:00:00-05', 'AT&T Stadium, Dallas',              'groups', 1, 'upcoming'),
-(team_id('IRN'), team_id('CRC'), '2026-06-16 13:00:00-05', 'BMO Field, Toronto',                'groups', 1, 'upcoming'),
-(team_id('CRO'), team_id('IRN'), '2026-06-20 22:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 2, 'upcoming'),
-(team_id('SUI'), team_id('CRC'), '2026-06-20 19:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 2, 'upcoming'),
-(team_id('CRO'), team_id('CRC'), '2026-06-24 16:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 3, 'upcoming'),
-(team_id('SUI'), team_id('IRN'), '2026-06-24 16:00:00-05', 'BC Place, Vancouver',               'groups', 3, 'upcoming'),
+-- ───────────── GRUPO I — Francia, Senegal, Irak, Noruega ─────────────
+-- Jornada 1
+(team_id('FRA'), team_id('SEN'), '2026-06-16 14:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 1, 'upcoming'),
+(team_id('IRQ'), team_id('NOR'), '2026-06-16 27:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('FRA'), team_id('IRQ'), '2026-06-22 16:00:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 2, 'upcoming'),
+(team_id('NOR'), team_id('SEN'), '2026-06-22 19:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('NOR'), team_id('FRA'), '2026-06-26 14:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 3, 'upcoming'),
+(team_id('SEN'), team_id('IRQ'), '2026-06-26 14:00:00+00', 'BMO Field, Toronto',                   'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO J ──────────────
-(team_id('KOR'), team_id('AUT'), '2026-06-17 13:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 1, 'upcoming'),
-(team_id('NGA'), team_id('PAR'), '2026-06-17 22:00:00-05', 'Estadio Azteca, Ciudad de México',  'groups', 1, 'upcoming'),
-(team_id('KOR'), team_id('NGA'), '2026-06-21 13:00:00-05', 'NRG Stadium, Houston',              'groups', 2, 'upcoming'),
-(team_id('AUT'), team_id('PAR'), '2026-06-21 22:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 2, 'upcoming'),
-(team_id('KOR'), team_id('PAR'), '2026-06-25 16:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 3, 'upcoming'),
-(team_id('AUT'), team_id('NGA'), '2026-06-25 16:00:00-05', 'AT&T Stadium, Dallas',              'groups', 3, 'upcoming'),
+-- ───────────── GRUPO J — Argentina, Argelia, Austria, Jordania ─────────────
+-- Jornada 1
+(team_id('ARG'), team_id('ALG'), '2026-06-16 20:00:00+00', 'Arrowhead Stadium, Kansas City',       'groups', 1, 'upcoming'),
+(team_id('AUT'), team_id('JOR'), '2026-06-16 23:00:00+00', 'Levi''s Stadium, Santa Clara',         'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('ARG'), team_id('AUT'), '2026-06-22 12:00:00+00', 'AT&T Stadium, Arlington',              'groups', 2, 'upcoming'),
+(team_id('JOR'), team_id('ALG'), '2026-06-22 22:00:00+00', 'Levi''s Stadium, Santa Clara',         'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('ALG'), team_id('AUT'), '2026-06-27 21:00:00+00', 'Arrowhead Stadium, Kansas City',       'groups', 3, 'upcoming'),
+(team_id('JOR'), team_id('ARG'), '2026-06-27 21:00:00+00', 'AT&T Stadium, Arlington',              'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO K ──────────────
-(team_id('DEN'), team_id('SCO'), '2026-06-18 13:00:00-05', 'BC Place, Vancouver',               'groups', 1, 'upcoming'),
-(team_id('RSA'), team_id('PER'), '2026-06-18 22:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 1, 'upcoming'),
-(team_id('DEN'), team_id('RSA'), '2026-06-22 13:00:00-05', 'BMO Field, Toronto',                'groups', 2, 'upcoming'),
-(team_id('SCO'), team_id('PER'), '2026-06-22 22:00:00-05', 'NRG Stadium, Houston',              'groups', 2, 'upcoming'),
-(team_id('DEN'), team_id('PER'), '2026-06-26 16:00:00-05', 'Hard Rock Stadium, Miami',          'groups', 3, 'upcoming'),
-(team_id('SCO'), team_id('RSA'), '2026-06-26 16:00:00-05', 'BC Place, Vancouver',               'groups', 3, 'upcoming'),
+-- ───────────── GRUPO K — Portugal, RD Congo, Uzbekistán, Colombia ─────────────
+-- Jornada 1
+(team_id('POR'), team_id('COD'), '2026-06-17 12:00:00+00', 'NRG Stadium, Houston',                 'groups', 1, 'upcoming'),
+(team_id('UZB'), team_id('COL'), '2026-06-17 21:00:00+00', 'Estadio Azteca, Ciudad de México',     'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('POR'), team_id('UZB'), '2026-06-23 12:00:00+00', 'NRG Stadium, Houston',                 'groups', 2, 'upcoming'),
+(team_id('COL'), team_id('COD'), '2026-06-23 21:00:00+00', 'Estadio Akron, Guadalajara',           'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('COL'), team_id('POR'), '2026-06-27 18:30:00+00', 'Hard Rock Stadium, Miami',             'groups', 3, 'upcoming'),
+(team_id('COD'), team_id('UZB'), '2026-06-27 18:30:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 3, 'upcoming'),
 
--- ────────────── GRUPO L ──────────────
-(team_id('EGY'), team_id('HUN'), '2026-06-18 16:00:00-05', 'Estadio Azteca, Ciudad de México',  'groups', 1, 'upcoming'),
-(team_id('NZL'), team_id('SAU'), '2026-06-18 19:00:00-05', 'SoFi Stadium, Los Angeles',         'groups', 1, 'upcoming'),
-(team_id('EGY'), team_id('NZL'), '2026-06-22 22:00:00-05', 'Levi''s Stadium, San Francisco',    'groups', 2, 'upcoming'),
-(team_id('HUN'), team_id('SAU'), '2026-06-22 13:00:00-05', 'Rose Bowl, Los Angeles',            'groups', 2, 'upcoming'),
-(team_id('EGY'), team_id('SAU'), '2026-06-26 19:00:00-05', 'BMO Field, Toronto',                'groups', 3, 'upcoming'),
-(team_id('HUN'), team_id('NZL'), '2026-06-26 19:00:00-05', 'MetLife Stadium, Nueva Jersey',     'groups', 3, 'upcoming');
+-- ───────────── GRUPO L — Inglaterra, Croacia, Ghana, Panamá ─────────────
+-- Jornada 1
+(team_id('ENG'), team_id('CRO'), '2026-06-17 15:00:00+00', 'AT&T Stadium, Arlington',              'groups', 1, 'upcoming'),
+(team_id('GHA'), team_id('PAN'), '2026-06-17 18:00:00+00', 'BMO Field, Toronto',                   'groups', 1, 'upcoming'),
+-- Jornada 2
+(team_id('ENG'), team_id('GHA'), '2026-06-23 15:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 2, 'upcoming'),
+(team_id('PAN'), team_id('CRO'), '2026-06-23 18:00:00+00', 'BMO Field, Toronto',                   'groups', 2, 'upcoming'),
+-- Jornada 3 (simultáneos)
+(team_id('PAN'), team_id('ENG'), '2026-06-27 16:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 3, 'upcoming'),
+(team_id('CRO'), team_id('GHA'), '2026-06-27 16:00:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 3, 'upcoming');
 
-
--- ── Limpiar la función auxiliar (ya no la necesitamos) ───────
+-- Limpiar función auxiliar
 DROP FUNCTION IF EXISTS team_id(TEXT);
 
 

@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS "world_cup";
+SET search_path TO "world_cup";
+
 -- =============================================================
 -- Predictor Mundial 2026 — Esquema PostgreSQL
 -- Base de datos: miguelr_prueba
