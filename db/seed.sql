@@ -1,79 +1,78 @@
-CREATE SCHEMA IF NOT EXISTS "world_cup";
 SET search_path TO "world_cup";
 
 INSERT INTO teams (name, code, flag_emoji, group_name, confederation) VALUES
 
 -- GRUPO A
-('México',          'MEX', '🇲🇽', 'A', 'CONCACAF'),
-('Sudáfrica',       'RSA', '🇿🇦', 'A', 'CAF'),
-('Corea del Sur',   'KOR', '🇰🇷', 'A', 'AFC'),
+('México', 'MEX', '🇲🇽', 'A', 'CONCACAF'),
+('Sudáfrica', 'RSA', '🇿🇦', 'A', 'CAF'),
+('Corea del Sur', 'KOR', '🇰🇷', 'A', 'AFC'),
 ('República Checa', 'CZE', '🇨🇿', 'A', 'UEFA'),
 
 -- GRUPO B
-('Canadá',          'CAN', '🇨🇦', 'B', 'CONCACAF'),
+('Canadá', 'CAN', '🇨🇦', 'B', 'CONCACAF'),
 ('Bosnia Herzegovina', 'BIH', '🇧🇦', 'B', 'UEFA'),
-('Qatar',           'QAT', '🇶🇦', 'B', 'AFC'),
-('Suiza',           'SUI', '🇨🇭', 'B', 'UEFA'),
+('Qatar', 'QAT', '🇶🇦', 'B', 'AFC'),
+('Suiza', 'SUI', '🇨🇭', 'B', 'UEFA'),
 
 -- GRUPO C
-('Brasil',          'BRA', '🇧🇷', 'C', 'CONMEBOL'),
-('Marruecos',       'MAR', '🇲🇦', 'C', 'CAF'),
-('Haití',           'HAI', '🇭🇹', 'C', 'CONCACAF'),
-('Escocia',         'SCO', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'C', 'UEFA'),
+('Brasil', 'BRA', '🇧🇷', 'C', 'CONMEBOL'),
+('Marruecos', 'MAR', '🇲🇦', 'C', 'CAF'),
+('Haití', 'HAI', '🇭🇹', 'C', 'CONCACAF'),
+('Escocia', 'SCO', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'C', 'UEFA'),
 
 -- GRUPO D
-('Estados Unidos',  'USA', '🇺🇸', 'D', 'CONCACAF'),
-('Paraguay',        'PAR', '🇵🇾', 'D', 'CONMEBOL'),
-('Australia',       'AUS', '🇦🇺', 'D', 'AFC'),
-('Turquía',         'TUR', '🇹🇷', 'D', 'UEFA'),
+('Estados Unidos', 'USA', '🇺🇸', 'D', 'CONCACAF'),
+('Paraguay', 'PAR', '🇵🇾', 'D', 'CONMEBOL'),
+('Australia', 'AUS', '🇦🇺', 'D', 'AFC'),
+('Turquía', 'TUR', '🇹🇷', 'D', 'UEFA'),
 
 -- GRUPO E
-('Alemania',        'GER', '🇩🇪', 'E', 'UEFA'),
-('Curazao',         'CUW', '🇨🇼', 'E', 'CONCACAF'),
+('Alemania', 'GER', '🇩🇪', 'E', 'UEFA'),
+('Curazao', 'CUW', '🇨🇼', 'E', 'CONCACAF'),
 ('Costa de Marfil', 'CIV', '🇨🇮', 'E', 'CAF'),
-('Ecuador',         'ECU', '🇪🇨', 'E', 'CONMEBOL'),
+('Ecuador', 'ECU', '🇪🇨', 'E', 'CONMEBOL'),
 
 -- GRUPO F
-('Países Bajos',    'NED', '🇳🇱', 'F', 'UEFA'),
-('Japón',           'JPN', '🇯🇵', 'F', 'AFC'),
-('Suecia',          'SWE', '🇸🇪', 'F', 'UEFA'),
-('Túnez',           'TUN', '🇹🇳', 'F', 'CAF'),
+('Países Bajos', 'NED', '🇳🇱', 'F', 'UEFA'),
+('Japón', 'JPN', '🇯🇵', 'F', 'AFC'),
+('Suecia', 'SWE', '🇸🇪', 'F', 'UEFA'),
+('Túnez', 'TUN', '🇹🇳', 'F', 'CAF'),
 
 -- GRUPO G
-('Bélgica',         'BEL', '🇧🇪', 'G', 'UEFA'),
-('Egipto',          'EGY', '🇪🇬', 'G', 'CAF'),
-('Irán',            'IRN', '🇮🇷', 'G', 'AFC'),
-('Nueva Zelanda',   'NZL', '🇳🇿', 'G', 'OFC'),
+('Bélgica', 'BEL', '🇧🇪', 'G', 'UEFA'),
+('Egipto', 'EGY', '🇪🇬', 'G', 'CAF'),
+('Irán', 'IRN', '🇮🇷', 'G', 'AFC'),
+('Nueva Zelanda', 'NZL', '🇳🇿', 'G', 'OFC'),
 
 -- GRUPO H
-('España',          'ESP', '🇪🇸', 'H', 'UEFA'),
-('Cabo Verde',      'CPV', '🇨🇻', 'H', 'CAF'),
-('Arabia Saudita',  'SAU', '🇸🇦', 'H', 'AFC'),
-('Uruguay',         'URU', '🇺🇾', 'H', 'CONMEBOL'),
+('España', 'ESP', '🇪🇸', 'H', 'UEFA'),
+('Cabo Verde', 'CPV', '🇨🇻', 'H', 'CAF'),
+('Arabia Saudita', 'SAU', '🇸🇦', 'H', 'AFC'),
+('Uruguay', 'URU', '🇺🇾', 'H', 'CONMEBOL'),
 
 -- GRUPO I
-('Francia',         'FRA', '🇫🇷', 'I', 'UEFA'),
-('Senegal',         'SEN', '🇸🇳', 'I', 'CAF'),
-('Irak',            'IRQ', '🇮🇶', 'I', 'AFC'),
-('Noruega',         'NOR', '🇳🇴', 'I', 'UEFA'),
+('Francia', 'FRA', '🇫🇷', 'I', 'UEFA'),
+('Senegal', 'SEN', '🇸🇳', 'I', 'CAF'),
+('Irak', 'IRQ', '🇮🇶', 'I', 'AFC'),
+('Noruega', 'NOR', '🇳🇴', 'I', 'UEFA'),
 
 -- GRUPO J
-('Argentina',       'ARG', '🇦🇷', 'J', 'CONMEBOL'),
-('Argelia',         'ALG', '🇩🇿', 'J', 'CAF'),
-('Austria',         'AUT', '🇦🇹', 'J', 'UEFA'),
+('Argentina', 'ARG', '🇦🇷', 'J', 'CONMEBOL'),
+('Argelia', 'ALG', '🇩🇿', 'J', 'CAF'),
+('Austria', 'AUT', '🇦🇹', 'J', 'UEFA'),
 ('Jordania', 'JOR', '🇯🇴', 'J', 'AFC'),
 
 -- GRUPO K
-('Portugal',        'POR', '🇵🇹', 'K', 'UEFA'),
-('RD Congo',        'COD', '🇨🇩', 'K', 'CAF'),
-('Uzbekistán',      'UZB', '🇺🇿', 'K', 'AFC'),
-('Colombia',        'COL', '🇨🇴', 'K', 'CONMEBOL'),
+('Portugal', 'POR', '🇵🇹', 'K', 'UEFA'),
+('RD Congo', 'COD', '🇨🇩', 'K', 'CAF'),
+('Uzbekistán', 'UZB', '🇺🇿', 'K', 'AFC'),
+('Colombia', 'COL', '🇨🇴', 'K', 'CONMEBOL'),
 
 -- GRUPO L
-('Inglaterra',      'ENG', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'L', 'UEFA'),
-('Croacia',         'CRO', '🇭🇷', 'L', 'UEFA'),
-('Ghana',           'GHA', '🇬🇭', 'L', 'CAF'),
-('Panamá',          'PAN', '🇵🇦', 'L', 'CONCACAF'),
+('Inglaterra', 'ENG', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'L', 'UEFA'),
+('Croacia', 'CRO', '🇭🇷', 'L', 'UEFA'),
+('Ghana', 'GHA', '🇬🇭', 'L', 'CAF'),
+('Panamá', 'PAN', '🇵🇦', 'L', 'CONCACAF');
 
 -- ── Función auxiliar para obtener id por código ──────────────
 -- La usaremos en los INSERTs de matches para no hardcodear IDs
@@ -85,6 +84,7 @@ $$ LANGUAGE SQL STABLE;
 
 
 -- ── 72 Partidos de fase de grupos ───────────────────────────────
+SELECT code FROM teams;
 
 INSERT INTO matches
   (home_team_id, away_team_id, match_date, venue, phase, matchday, status)
@@ -170,18 +170,18 @@ VALUES
 -- ───────────── GRUPO H — España, Cabo Verde, Arabia Saudita, Uruguay ─────────────
 -- Jornada 1
 (team_id('ESP'), team_id('CPV'), '2026-06-15 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 1, 'upcoming'),
-(team_id('KSA'), team_id('URU'), '2026-06-15 27:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 1, 'upcoming'),
+(team_id('SAU'), team_id('URU'), '2026-06-15 17:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 1, 'upcoming'),
 -- Jornada 2
-(team_id('ESP'), team_id('KSA'), '2026-06-21 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 2, 'upcoming'),
+(team_id('ESP'), team_id('SAU'), '2026-06-21 11:00:00+00', 'Mercedes-Benz Stadium, Atlanta',       'groups', 2, 'upcoming'),
 (team_id('URU'), team_id('CPV'), '2026-06-21 17:00:00+00', 'Hard Rock Stadium, Miami',             'groups', 2, 'upcoming'),
 -- Jornada 3 (simultáneos)
-(team_id('CPV'), team_id('KSA'), '2026-06-26 19:00:00+00', 'NRG Stadium, Houston',                 'groups', 3, 'upcoming'),
+(team_id('CPV'), team_id('SAU'), '2026-06-26 19:00:00+00', 'NRG Stadium, Houston',                 'groups', 3, 'upcoming'),
 (team_id('URU'), team_id('ESP'), '2026-06-26 19:00:00+00', 'Estadio Akron, Guadalajara',           'groups', 3, 'upcoming'),
 
 -- ───────────── GRUPO I — Francia, Senegal, Irak, Noruega ─────────────
 -- Jornada 1
 (team_id('FRA'), team_id('SEN'), '2026-06-16 14:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 1, 'upcoming'),
-(team_id('IRQ'), team_id('NOR'), '2026-06-16 27:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 1, 'upcoming'),
+(team_id('IRQ'), team_id('NOR'), '2026-06-16 17:00:00+00', 'Gillette Stadium, Foxborough',         'groups', 1, 'upcoming'),
 -- Jornada 2
 (team_id('FRA'), team_id('IRQ'), '2026-06-22 16:00:00+00', 'Lincoln Financial Field, Filadelfia',  'groups', 2, 'upcoming'),
 (team_id('NOR'), team_id('SEN'), '2026-06-22 19:00:00+00', 'MetLife Stadium, Nueva York/NJ',       'groups', 2, 'upcoming'),
