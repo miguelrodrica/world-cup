@@ -394,26 +394,16 @@ export async function adminSetResult(
       0
     );
 
-    console.log("UID:", uid);
-    console.log("TOTAL:", total);
-
-    console.log("BUSCANDO USUARIO:", uid);
-
     const check = await supabase
       .from("users")
       .select("*")
       .eq("id", uid);
-
-    console.log("CHECK USER:", check);
 
     const result = await supabase
       .from("users")
       .update({ total_points: total })
       .eq("id", uid)
       .select();
-
-    console.log("UPDATE RESULT:", result);
-    console.log("UPDATE ERROR:", result.error);
   }
 
   // 5. Refrescar puntos del admin en localStorage
