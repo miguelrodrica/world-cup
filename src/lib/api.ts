@@ -1,118 +1,78 @@
-import type {
-  LeaderboardEntry,
-  Match,
-  Phase,
-  Prediction,
-  User,
-} from "./types";
-import { computeBasePoints, computeFinalPoints } from "./types";
-import { mockLeaderboard, mockMatches } from "./mockData";
+// src/lib/api.ts
+// Reescrito para usar Supabase directamente.
+// Mismas funciones exportadas → el resto de la app NO cambia.
 
+import { createClient } from "@supabase/supabase-js";
+import type { LeaderboardEntry, Match, Phase, Prediction, User } from "./types";
+import { computeBasePoints, computeFinalPoints } from "./types";
+
+// ── Supabase client ────────────────────────────────────────────
+// VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY van en .env.local (desarrollo)
+// y en las variables de entorno de Vercel (producción)
+const SUPABASE_URL      = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Auth helpers ───────────────────────────────────────────────
 const AUTH_KEY = "auth";
-const USERS_KEY = "predictor_users";
-const MATCHES_KEY = "predictor_matches";
-const PREDICTIONS_KEY = "predictor_predictions";
-const LOCK_KEY = "predictor_lock";
 
 type StoredAuth = { token: string; user: User } | null;
 
-function isBrowser() {
-  return typeof window !== "undefined";
+function saveAuth(user: User, token: string) {
+  localStorage.setItem(AUTH_KEY, JSON.stringify({ token, user }));
 }
 
-function readJSON<T>(key: string, fallback: T): T {
-  if (!isBrowser()) return fallback;
+export function getAuth(): StoredAuth {
+  if (typeof window === "undefined") return null;
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    const raw = localStorage.getItem(AUTH_KEY);
+    return raw ? JSON.parse(raw) : null;
   } catch {
-    return fallback;
+    return null;
   }
 }
 
-function writeJSON(key: string, value: unknown) {
-  if (!isBrowser()) return;
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function seed() {
-  if (!isBrowser()) return;
-  if (!localStorage.getItem(MATCHES_KEY)) {
-    writeJSON(MATCHES_KEY, mockMatches);
-  }
-  if (!localStorage.getItem(USERS_KEY)) {
-    // Seed with the mock leaderboard as "other" users (no password login for them).
-    const seeded: Array<User & { password?: string }> = mockLeaderboard.map(
-      (e) => ({
-        id: e.user_id,
-        username: e.username,
-        email: `${e.username}@demo.com`,
-        role: e.username === "tu_usuario" ? "user" : "user",
-        total_points: e.total_points,
-      }),
-    );
-    // Demo admin
-    seeded.push({
-      id: 999,
-      username: "admin",
-      email: "admin@demo.com",
-      role: "admin",
-      total_points: 0,
-      password: "admin123",
-    });
-    writeJSON(USERS_KEY, seeded);
-  }
-  if (!localStorage.getItem(PREDICTIONS_KEY)) {
-    // Seed predictions for the current demo user from my_prediction in mocks
-    const preds: Array<Prediction & { user_id: number }> = [];
-    for (const m of mockMatches) {
-      if (m.my_prediction) {
-        preds.push({ ...m.my_prediction, user_id: 1 });
-      }
-    }
-    writeJSON(PREDICTIONS_KEY, preds);
-  }
-}
-
-seed();
-
-function currentAuth(): StoredAuth {
-  return readJSON<StoredAuth>(AUTH_KEY, null);
-}
-
-function requireAuth(): { token: string; user: User } {
-  const a = currentAuth();
+function requireAuth() {
+  const a = getAuth();
   if (!a) throw new Error("401");
   return a;
 }
 
-function delay<T>(v: T, ms = 250): Promise<T> {
-  return new Promise((r) => setTimeout(() => r(v), ms));
-}
-
-// ---------- Auth ----------
+// ── Auth ───────────────────────────────────────────────────────
 
 export async function login(email: string, password: string) {
-  const users = readJSON<Array<User & { password?: string }>>(USERS_KEY, []);
-  // Demo rule: any user with email matches → allow with password "demo" OR exact password for admin seed
-  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (!user) throw new Error("Credenciales inválidas");
-  if (user.password && user.password !== password) {
-    throw new Error("Credenciales inválidas");
-  }
-  if (!user.password && password !== "demo") {
-    throw new Error("Credenciales inválidas (usa 'demo' para cuentas de demo)");
-  }
-  const safe: User = {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    total_points: user.total_points,
+  // 1. Autenticar con Supabase
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw new Error("Credenciales inválidas");
+
+  // 2. Obtener perfil de la tabla users
+  const { data: profile, error: profileErr } = await supabase
+    .from("users")
+    .select("id, username, email, role, total_points")
+    .eq("email", email)
+    .single();
+
+  if (profileErr || !profile) throw new Error("Perfil no encontrado");
+
+  const user: User = {
+    id:           profile.id,
+    username:     profile.username,
+    email:        profile.email,
+    role:         profile.role,
+    total_points: profile.total_points,
   };
-  const payload = { token: `mock.${user.id}.${Date.now()}`, user: safe };
-  writeJSON(AUTH_KEY, payload);
-  return delay(payload);
+
+  saveAuth(user, data.session!.access_token);
+  return { token: data.session!.access_token, user };
+}
+
+export async function logout() {
+  await supabase.auth.signOut();
+
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(AUTH_KEY);
+  }
 }
 
 export async function register(
@@ -120,132 +80,170 @@ export async function register(
   email: string,
   password: string,
 ) {
-  const users = readJSON<Array<User & { password?: string }>>(USERS_KEY, []);
-  if (users.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
-    throw new Error("Ese email ya está registrado");
-  }
-  if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+  // Verificar username disponible
+  const { data: taken } = await supabase
+    .from("users")
+    .select("id")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (taken) {
     throw new Error("Ese nombre de usuario ya existe");
   }
-  const id = Math.max(0, ...users.map((u) => u.id)) + 1;
-  const newUser: User & { password: string } = {
-    id,
-    username,
+
+  // Crear usuario en Supabase Auth
+  const { data, error } = await supabase.auth.signUp({
     email,
-    role: "user",
-    total_points: 0,
     password,
+    options: {
+      data: {
+        username,
+      },
+    },
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!data.user) {
+    throw new Error("No se pudo crear el usuario");
+  }
+
+  // Si tienes confirmación de email activada
+  // es normal que no exista sesión todavía
+  if (!data.session) {
+    return {
+      token: "",
+      user: null,
+    };
+  }
+
+  // Esperar un momento para que el trigger cree el perfil
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const { data: profile, error: profileErr } = await supabase
+    .from("users")
+    .select("id, username, email, role, total_points")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profileErr || !profile) {
+    throw new Error("El usuario fue creado pero no se encontró el perfil");
+  }
+
+  const user: User = {
+    id: profile.id,
+    username: profile.username,
+    email: profile.email,
+    role: profile.role,
+    total_points: profile.total_points,
   };
-  users.push(newUser);
-  writeJSON(USERS_KEY, users);
-  const safe: User = {
-    id,
-    username,
-    email,
-    role: "user",
-    total_points: 0,
+
+  saveAuth(user, data.session.access_token);
+
+  return {
+    token: data.session.access_token,
+    user,
   };
-  const payload = { token: `mock.${id}.${Date.now()}`, user: safe };
-  writeJSON(AUTH_KEY, payload);
-  return delay(payload);
 }
 
-export function logout() {
-  if (!isBrowser()) return;
-  localStorage.removeItem(AUTH_KEY);
-}
-
-export function getAuth(): StoredAuth {
-  return currentAuth();
-}
-
-// ---------- Matches ----------
-
-function readMatches(): Match[] {
-  return readJSON<Match[]>(MATCHES_KEY, mockMatches);
-}
-function writeMatches(m: Match[]) {
-  writeJSON(MATCHES_KEY, m);
-}
-
-function readPredictionsRaw(): Array<Prediction & { user_id: number }> {
-  return readJSON<Array<Prediction & { user_id: number }>>(PREDICTIONS_KEY, []);
-}
-function writePredictions(p: Array<Prediction & { user_id: number }>) {
-  writeJSON(PREDICTIONS_KEY, p);
-}
-
-function attachMyPrediction(match: Match, userId: number): Match {
-  const all = readPredictionsRaw();
-  const mine = all.find((p) => p.match_id === match.id && p.user_id === userId);
-  const copy = { ...match } as Match;
-  copy.my_prediction = mine
-    ? {
-        id: mine.id,
-        match_id: mine.match_id,
-        predicted_home: mine.predicted_home,
-        predicted_away: mine.predicted_away,
-        points_earned: mine.points_earned,
-      }
-    : undefined;
-  return copy;
-}
+// ── Matches ────────────────────────────────────────────────────
 
 export async function getMatches(opts?: {
   phase?: Phase | "all";
   status?: "all" | "upcoming" | "live" | "finished";
 }): Promise<Match[]> {
   const { user } = requireAuth();
-  let list = readMatches();
+
+  let query = supabase
+    .from("matches")
+    .select(`
+      *,
+      home_team:teams!home_team_id(*),
+      away_team:teams!away_team_id(*)
+    `)
+    .order("match_date");
+
   if (opts?.phase && opts.phase !== "all") {
-    list = list.filter((m) => m.phase === opts.phase);
+    query = query.eq("phase", opts.phase);
   }
   if (opts?.status && opts.status !== "all") {
-    list = list.filter((m) => m.status === opts.status);
+    query = query.eq("status", opts.status);
   }
-  list = list
-    .map((m) => attachMyPrediction(m, user.id))
-    .sort(
-      (a, b) =>
-        new Date(a.match_date).getTime() - new Date(b.match_date).getTime(),
-    );
-  return delay(list);
+
+  const { data: matches, error } = await query;
+  if (error) throw new Error(error.message);
+
+  // Traer predicciones del usuario en una sola consulta
+  const { data: preds } = await supabase
+    .from("predictions")
+    .select("*")
+    .eq("user_id", user.id);
+
+  const predMap = new Map((preds || []).map((p) => [p.match_id, p]));
+
+  return (matches || []).map((m) => ({
+    ...m,
+    my_prediction: predMap.get(m.id) ?? undefined,
+  })) as Match[];
 }
 
 export async function getMatch(id: number): Promise<Match> {
   const { user } = requireAuth();
-  const m = readMatches().find((x) => x.id === id);
-  if (!m) throw new Error("Partido no encontrado");
-  return delay(attachMyPrediction(m, user.id));
+
+  const { data: match, error } = await supabase
+    .from("matches")
+    .select(`
+      *,
+      home_team:teams!home_team_id(*),
+      away_team:teams!away_team_id(*)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error || !match) throw new Error("Partido no encontrado");
+
+  const { data: pred } = await supabase
+    .from("predictions")
+    .select("*")
+    .eq("match_id", id)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return { ...match, my_prediction: pred ?? undefined } as Match;
 }
 
-// ---------- Predictions ----------
+// ── Predictions ────────────────────────────────────────────────
 
 export type PredictionWithMatch = Prediction & { match: Match };
 
 export async function getMyPredictions(): Promise<PredictionWithMatch[]> {
   const { user } = requireAuth();
-  const all = readPredictionsRaw().filter((p) => p.user_id === user.id);
-  const matches = readMatches();
-  const joined: PredictionWithMatch[] = [];
-  for (const p of all) {
-    const match = matches.find((m) => m.id === p.match_id);
-    if (!match) continue;
-    joined.push({
-      id: p.id,
-      match_id: p.match_id,
-      predicted_home: p.predicted_home,
-      predicted_away: p.predicted_away,
-      points_earned: p.points_earned,
-      match,
-    });
-  }
-  joined.sort(
-    (a, b) =>
-      new Date(b.match.match_date).getTime() -
-      new Date(a.match.match_date).getTime(),
-  );
-  return delay(joined);
+
+  const { data, error } = await supabase
+    .from("predictions")
+    .select(`
+      *,
+      match:matches(
+        *,
+        home_team:teams!home_team_id(*),
+        away_team:teams!away_team_id(*)
+      )
+    `)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data || []).map((p) => ({
+    id:             p.id,
+    match_id:       p.match_id,
+    predicted_home: p.predicted_home,
+    predicted_away: p.predicted_away,
+    points_earned:  p.points_earned,
+    match:          p.match as unknown as Match,
+  }));
 }
 
 export async function upsertPrediction(input: {
@@ -254,120 +252,88 @@ export async function upsertPrediction(input: {
   predicted_away: number;
 }): Promise<Prediction> {
   const { user } = requireAuth();
-  if (readJSON<boolean>(LOCK_KEY, false)) {
-    throw new Error("Los pronósticos están bloqueados por el admin");
-  }
-  const match = readMatches().find((m) => m.id === input.match_id);
-  if (!match) throw new Error("Partido no encontrado");
-  if (match.status !== "upcoming") {
-    throw new Error("Este partido ya comenzó, no puedes predecir");
-  }
+
+  // Verificar que el partido existe y no ha empezado
+  const { data: match, error: matchErr } = await supabase
+    .from("matches")
+    .select("id, status, match_date")
+    .eq("id", input.match_id)
+    .single();
+
+  if (matchErr || !match) throw new Error("Partido no encontrado");
+  if (match.status !== "upcoming") throw new Error("Este partido ya comenzó");
   if (new Date(match.match_date).getTime() <= Date.now()) {
     throw new Error("El partido ya comenzó");
   }
 
-  const all = readPredictionsRaw();
-  const idx = all.findIndex(
-    (p) => p.match_id === input.match_id && p.user_id === user.id,
-  );
-  let saved: Prediction & { user_id: number };
-  if (idx >= 0) {
-    saved = {
-      ...all[idx],
-      predicted_home: input.predicted_home,
-      predicted_away: input.predicted_away,
-      points_earned: null,
-    };
-    all[idx] = saved;
-  } else {
-    const id = Math.max(0, ...all.map((p) => p.id)) + 1;
-    saved = {
-      id,
-      user_id: user.id,
-      match_id: input.match_id,
-      predicted_home: input.predicted_home,
-      predicted_away: input.predicted_away,
-      points_earned: null,
-    };
-    all.push(saved);
-  }
-  writePredictions(all);
-  return delay({
-    id: saved.id,
-    match_id: saved.match_id,
-    predicted_home: saved.predicted_home,
-    predicted_away: saved.predicted_away,
-    points_earned: saved.points_earned,
-  });
+  // upsert: inserta o actualiza si ya existe (user_id + match_id únicos)
+  const { data, error } = await supabase
+    .from("predictions")
+    .upsert(
+      {
+        user_id:        user.id,
+        match_id:       input.match_id,
+        predicted_home: input.predicted_home,
+        predicted_away: input.predicted_away,
+        points_earned:  null,
+      },
+      { onConflict: "user_id,match_id" }
+    )
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as Prediction;
 }
 
-// ---------- Leaderboard ----------
-
-function recomputeTotals() {
-  const preds = readPredictionsRaw();
-  const users = readJSON<Array<User & { password?: string }>>(USERS_KEY, []);
-  const totals = new Map<number, { pts: number; exact: number; partial: number; finished: number }>();
-  for (const u of users) {
-    totals.set(u.id, { pts: 0, exact: 0, partial: 0, finished: 0 });
-  }
-  for (const p of preds) {
-    if (p.points_earned == null) continue;
-    const t = totals.get(p.user_id);
-    if (!t) continue;
-    t.pts += p.points_earned;
-    t.finished += 1;
-    if (p.points_earned >= 5) t.exact += 1;
-    else if (p.points_earned > 0) t.partial += 1;
-  }
-  // Blend seeded totals for demo users who have no finished preds
-  const blended = users.map((u) => {
-    const t = totals.get(u.id)!;
-    const seeded = mockLeaderboard.find((e) => e.user_id === u.id);
-    if (t.finished === 0 && seeded) {
-      return {
-        ...u,
-        total_points: seeded.total_points,
-        _exact: seeded.exact_count,
-        _partial: seeded.partial_count,
-      } as User & { password?: string; _exact: number; _partial: number };
-    }
-    return {
-      ...u,
-      total_points: t.pts,
-      _exact: t.exact,
-      _partial: t.partial,
-    } as User & { password?: string; _exact: number; _partial: number };
-  });
-  writeJSON(USERS_KEY, blended.map(({ _exact, _partial, ...rest }) => rest));
-  return blended;
-}
+// ── Leaderboard ────────────────────────────────────────────────
 
 export async function getLeaderboard(
   _phase: Phase | "general" = "general",
 ): Promise<LeaderboardEntry[]> {
-  const auth = currentAuth();
+  const auth = getAuth();
   const currentId = auth?.user.id ?? 0;
-  const blended = recomputeTotals() as Array<
-    User & { _exact: number; _partial: number }
-  >;
-  const sorted = [...blended].sort((a, b) => b.total_points - a.total_points);
-  const entries: LeaderboardEntry[] = sorted.map((u, i) => {
-    const total = u._exact + u._partial;
+
+  // Traer usuarios ordenados por puntos
+  const { data: users, error } = await supabase
+    .from("users")
+    .select("id, username, total_points")
+    .order("total_points", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  // Traer todas las predicciones con puntos para calcular exactos/parciales
+  const { data: preds } = await supabase
+    .from("predictions")
+    .select("user_id, points_earned")
+    .not("points_earned", "is", null);
+
+  const statsMap = new Map<string, { exact: number; partial: number; total: number }>();
+
+  for (const p of preds || []) {
+    const s = statsMap.get(p.user_id) ?? { exact: 0, partial: 0, total: 0 };
+    s.total++;
+    if (p.points_earned >= 5) s.exact++;
+    else if (p.points_earned > 0) s.partial++;
+    statsMap.set(p.user_id, s);
+  }
+
+  return (users || []).map((u, i) => {
+    const s = statsMap.get(u.id) ?? { exact: 0, partial: 0, total: 0 };
     return {
-      rank: i + 1,
-      user_id: u.id,
-      username: u.username,
-      total_points: u.total_points,
-      exact_count: u._exact,
-      partial_count: u._partial,
-      accuracy_pct: total > 0 ? Math.round((u._exact / Math.max(total, 1)) * 100) : 0,
+      rank:            i + 1,
+      user_id:         u.id,
+      username:        u.username,
+      total_points:    u.total_points,
+      exact_count:     s.exact,
+      partial_count:   s.partial,
+      accuracy_pct:    s.total > 0 ? Math.round((s.exact / s.total) * 100) : 0,
       is_current_user: u.id === currentId,
     };
   });
-  return delay(entries);
 }
 
-// ---------- Admin ----------
+// ── Admin ──────────────────────────────────────────────────────
 
 export async function adminSetResult(
   matchId: number,
@@ -376,52 +342,99 @@ export async function adminSetResult(
 ): Promise<{ affectedUsers: number }> {
   const { user } = requireAuth();
   if (user.role !== "admin") throw new Error("No autorizado");
-  const matches = readMatches();
-  const idx = matches.findIndex((m) => m.id === matchId);
-  if (idx < 0) throw new Error("Partido no encontrado");
-  matches[idx] = {
-    ...matches[idx],
-    home_score,
-    away_score,
-    status: "finished",
-  };
-  writeMatches(matches);
 
-  // Recompute points for all predictions of this match
-  const preds = readPredictionsRaw();
-  let affected = 0;
-  for (const p of preds) {
-    if (p.match_id !== matchId) continue;
+  // 1. Actualizar el partido
+  const { data: match, error: matchErr } = await supabase
+    .from("matches")
+    .update({ home_score, away_score, status: "finished" })
+    .eq("id", matchId)
+    .select()
+    .single();
+
+  if (matchErr || !match) throw new Error("Partido no encontrado");
+
+  // 2. Obtener predicciones de este partido
+  const { data: preds, error: predsErr } = await supabase
+    .from("predictions")
+    .select("*")
+    .eq("match_id", matchId);
+
+  if (predsErr) throw new Error(predsErr.message);
+
+  const affectedUserIds = new Set<string>();
+
+  // 3. Calcular y guardar puntos de cada predicción
+  for (const pred of preds || []) {
     const base = computeBasePoints(
-      p.predicted_home,
-      p.predicted_away,
+      pred.predicted_home,
+      pred.predicted_away,
       home_score,
       away_score,
     );
-    p.points_earned = computeFinalPoints(base, matches[idx].phase);
-    affected += 1;
-  }
-  writePredictions(preds);
-  recomputeTotals();
+    const pts = computeFinalPoints(base, match.phase);
 
-  // Refresh auth user total_points if current user was affected
-  const auth = currentAuth();
-  if (auth) {
-    const users = readJSON<Array<User>>(USERS_KEY, []);
-    const me = users.find((u) => u.id === auth.user.id);
-    if (me) {
-      writeJSON(AUTH_KEY, { ...auth, user: { ...auth.user, total_points: me.total_points } });
-    }
+    await supabase
+      .from("predictions")
+      .update({ points_earned: pts })
+      .eq("id", pred.id);
+
+    affectedUserIds.add(pred.user_id);
   }
-  return delay({ affectedUsers: affected });
+
+  // 4. Recalcular total_points de cada usuario afectado
+  for (const uid of affectedUserIds) {
+    const { data: userPreds } = await supabase
+      .from("predictions")
+      .select("points_earned")
+      .eq("user_id", uid)
+      .not("points_earned", "is", null);
+
+    const total = (userPreds || []).reduce(
+      (sum, p) => sum + (p.points_earned ?? 0),
+      0
+    );
+
+    console.log("UID:", uid);
+    console.log("TOTAL:", total);
+
+    console.log("BUSCANDO USUARIO:", uid);
+
+    const check = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", uid);
+
+    console.log("CHECK USER:", check);
+
+    const result = await supabase
+      .from("users")
+      .update({ total_points: total })
+      .eq("id", uid)
+      .select();
+
+    console.log("UPDATE RESULT:", result);
+    console.log("UPDATE ERROR:", result.error);
+  }
+
+  // 5. Refrescar puntos del admin en localStorage
+  const { data: meProfile } = await supabase
+    .from("users")
+    .select("total_points")
+    .eq("id", user.id)
+    .single();
+
+  if (meProfile) {
+    const stored = getAuth();
+    if (stored) saveAuth({ ...stored.user, total_points: meProfile.total_points }, stored.token);
+  }
+
+  return { affectedUsers: affectedUserIds.size };
 }
 
+// Mantenidos por compatibilidad (no se necesitan con Supabase)
 export async function adminGetLock(): Promise<boolean> {
-  return delay(readJSON<boolean>(LOCK_KEY, false));
+  return false;
 }
-export async function adminSetLock(locked: boolean) {
-  const { user } = requireAuth();
-  if (user.role !== "admin") throw new Error("No autorizado");
-  writeJSON(LOCK_KEY, locked);
-  return delay({ locked });
+export async function adminSetLock(_locked: boolean) {
+  return { locked: _locked };
 }

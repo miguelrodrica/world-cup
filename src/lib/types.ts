@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;        // ← era number, ahora string (UUID)
   username: string;
   email: string;
   role: "user" | "admin";
@@ -49,7 +49,7 @@ export interface Match {
 
 export interface LeaderboardEntry {
   rank: number;
-  user_id: number;
+  user_id: string;   // ← era number, ahora string (UUID)
   username: string;
   total_points: number;
   exact_count: number;

@@ -71,16 +71,6 @@ function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          Demo: admin@demo.com / admin123 — o cualquier usuario de la tabla con contraseña{" "}
-          <span className="font-mono text-foreground">demo</span>
-        </p>
-
-        <div className="mt-4 text-center">
-          <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">
-            ← Volver
-          </Link>
-        </div>
       </div>
     </div>
   );
@@ -92,8 +82,8 @@ function LoginForm({
   onSubmit: (email: string, password: string) => Promise<void>;
 }) {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@demo.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const submit = async (e: FormEvent) => {
@@ -117,6 +107,7 @@ function LoginForm({
         <Input
           id="email"
           type="email"
+          placeholder="correo@ejemplo.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -128,6 +119,7 @@ function LoginForm({
         <Input
           id="password"
           type="password"
+          placeholder="Tu contraseña"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
