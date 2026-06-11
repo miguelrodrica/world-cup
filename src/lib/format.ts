@@ -3,15 +3,17 @@ import { PHASE_LABELS } from "./types";
 
 export function formatMatchDate(iso: string): string {
   const d = new Date(iso);
-  const date = new Intl.DateTimeFormat("es-ES", {
+  const date = new Intl.DateTimeFormat("es-CO", {
     weekday: "short",
     day: "2-digit",
     month: "short",
+    timeZone: "America/Bogota",
   }).format(d);
-  const time = new Intl.DateTimeFormat("es-ES", {
+  const time = new Intl.DateTimeFormat("es-CO", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: "America/Bogota",
   }).format(d);
   return `${date.charAt(0).toUpperCase()}${date.slice(1)} · ${time}`;
 }
